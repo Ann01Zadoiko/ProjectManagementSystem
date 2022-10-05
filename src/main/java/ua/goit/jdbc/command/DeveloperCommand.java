@@ -39,14 +39,14 @@ public class DeveloperCommand implements Command{
     public void create(){
         String name;
         while (true) {
-            view.write("Enter developer name:");
+            view.write("Enter developer name");
             name = view.read();
             if (!service.isExist(name)) {
                 break;
             }
-            view.write("Developer already exists.");
+            view.write("Developer already exists");
         }
-        view.write("Enter developer age:");
+        view.write("Enter developer age");
         Integer age = Integer.valueOf(view.read());
         view.write("Enter developer salary");
         Integer salary = Integer.valueOf(view.read());
@@ -65,19 +65,19 @@ public class DeveloperCommand implements Command{
     public void update(){
         String name;
         while (true) {
-            view.write("Enter developer name:");
+            view.write("Enter developer name");
             name = view.read();
             if (service.isExist(name)) {
                 break;
             }
-            view.write("Developer doesn't exist.");
+            view.write("Developer doesn't exist");
         }
         DeveloperDto developerDto = service.findByName(name);
-        view.write("Enter developer name:");
+        view.write("Enter developer name");
         name = view.read();
-        view.write("Enter developer age:");
+        view.write("Enter developer age");
         Integer age = Integer.valueOf(view.read());
-        view.write("Enter developer salary:");
+        view.write("Enter developer salary");
         Integer salary = Integer.valueOf(view.read());
         if (!name.equals("")) {
             developerDto.setName(name);
@@ -95,12 +95,12 @@ public class DeveloperCommand implements Command{
     public void delete(){
         String name;
         while (true) {
-            view.write("Enter developer name:");
+            view.write("Enter developer name");
             name = view.read();
             if (service.isExist(name)) {
                 break;
             }
-            view.write("Developer doesn't exist.");
+            view.write("Developer doesn't exist");
         }
         DeveloperDto developerDto = service.findByName(name);
         service.delete(developerDto);

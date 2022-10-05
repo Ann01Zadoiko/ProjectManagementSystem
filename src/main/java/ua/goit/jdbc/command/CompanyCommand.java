@@ -37,14 +37,14 @@ public class CompanyCommand implements Command{
     public void create(){
         String name;
         while (true) {
-            view.write("Enter company name:");
+            view.write("Enter company name");
             name = view.read();
             if (!service.isExist(name)) {
                 break;
             }
-            view.write("Company already exists.");
+            view.write("Company already exists");
         }
-        view.write("Enter company location:");
+        view.write("Enter company location");
         String country = view.read();
         CompanyDto companyDto = new CompanyDto(name, country);
         service.save(companyDto);
@@ -61,17 +61,17 @@ public class CompanyCommand implements Command{
     public void update(){
         String name;
         while (true) {
-            view.write("Enter company name:");
+            view.write("Enter company name");
             name = view.read();
             if (service.isExist(name)) {
                 break;
             }
-            view.write("Company doesn't exist.");
+            view.write("Company doesn't exist");
         }
         CompanyDto companyDto = service.findByName(name);
-        view.write("Enter company name:");
+        view.write("Enter company name");
         name = view.read();
-        view.write("Enter company location:");
+        view.write("Enter company location");
         String country = view.read();
         if (!name.equals("")) {
             companyDto.setName(name);
@@ -86,12 +86,12 @@ public class CompanyCommand implements Command{
     public void delete(){
         String name;
         while (true) {
-            view.write("Enter company name:");
+            view.write("Enter company name");
             name = view.read();
             if (service.isExist(name)) {
                 break;
             }
-            view.write("Company doesn't exist.");
+            view.write("Company doesn't exist");
         }
         CompanyDto companyDto = service.findByName(name);
         service.delete(companyDto);

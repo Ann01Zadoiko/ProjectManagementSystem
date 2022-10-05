@@ -27,7 +27,7 @@ public class ListOfJavaDevelopers implements Command{
     @Override
     public void execute() {
         skillsService.getListOfLanguage().stream().forEach(System.out::println);
-        view.write("Enter developer's language: ");
+        view.write("Enter developer's language");
         String language = view.read();
         while (true) {
             try {

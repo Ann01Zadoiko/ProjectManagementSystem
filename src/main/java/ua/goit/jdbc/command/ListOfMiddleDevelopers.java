@@ -26,7 +26,7 @@ public class ListOfMiddleDevelopers implements Command{
     @Override
     public void execute() {
         skillsService.getListOfLevel().stream().forEach(System.out::println);
-        view.write("Enter developer's skill level: ");
+        view.write("Enter developer's skill level");
         String skillLevel = view.read();
         while (true) {
             try {

@@ -25,7 +25,7 @@ public class SalaryForProject implements Command{
     @Override
     public void execute() {
         projectsService.getListProject().stream().forEach(System.out::println);
-        view.write("Enter project name: ");
+        view.write("Enter project name");
         String projectName = view.read();
         while (true) {
             try {

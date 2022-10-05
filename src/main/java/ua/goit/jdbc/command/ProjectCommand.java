@@ -41,12 +41,12 @@ public class ProjectCommand implements Command{
     public void create(){
         String name;
         while (true) {
-            view.write("Enter project name:");
+            view.write("Enter project name");
             name = view.read();
             if (!service.isExist(name)) {
                 break;
             }
-            view.write("Project already exists.");
+            view.write("Project already exists");
         }
         view.write("Enter project cost:");
         Integer cost = Integer.valueOf(view.read());
@@ -67,17 +67,17 @@ public class ProjectCommand implements Command{
     public void update(){
         String name;
         while (true) {
-            view.write("Enter project name:");
+            view.write("Enter project name");
             name = view.read();
             if (service.isExist(name)) {
                 break;
             }
-            view.write("Project doesn't exist.");
+            view.write("Project doesn't exist");
         }
         ProjectDto projectDto = service.findByName(name);
-        view.write("Enter project name:");
+        view.write("Enter project name");
         name = view.read();
-        view.write("Enter project cost:");
+        view.write("Enter project cost");
         Integer cost = Integer.valueOf(view.read());
         view.write("Enter date created");
         LocalDate dateCreate = LocalDate.parse(view.read());
@@ -97,12 +97,12 @@ public class ProjectCommand implements Command{
     public void delete(){
         String name;
         while (true) {
-            view.write("Enter project name:");
+            view.write("Enter project name");
             name = view.read();
             if (service.isExist(name)) {
                 break;
             }
-            view.write("Project doesn't exist.");
+            view.write("Project doesn't exist");
         }
         ProjectDto projectDto = service.findByName(name);
         service.delete(projectDto);

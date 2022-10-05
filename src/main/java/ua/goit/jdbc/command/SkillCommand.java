@@ -43,12 +43,11 @@ public class SkillCommand implements Command{
             view.write("Enter skill level");
             level = view.read();
             if (!service.isExist(language,level)) break;
-            view.write("Skill already exists.");
+            view.write("Skill already exists");
         }
         SkillDto skillDto = new SkillDto(language,level);
         service.save(skillDto);
-        view.write(String.format("Programming " +
-                "language %s added and skill level %s added to database",language,level));
+        view.write(String.format("Programming language %s added and skill level %s added to database",language,level));
     }
 
     public void read(){
@@ -68,7 +67,7 @@ public class SkillCommand implements Command{
             view.write("Enter skill level");
             level = view.read();
             if (service.isExist(language,level)) break;
-            view.write("Skill doesn't exist.");
+            view.write("Skill doesn't exist");
         }
         SkillDto skillDto = service.findByLanguageAndLevel(language,level);
         view.write("Enter programming language");
@@ -93,7 +92,7 @@ public class SkillCommand implements Command{
             view.write("Enter skill level");
             level = view.read();
             if (service.isExist(language,level)) break;
-            view.write("Skill doesn't exist.");
+            view.write("Skill doesn't exist");
         }
         SkillDto skillDto = service.findByLanguageAndLevel(language,level);
         service.delete(skillDto);

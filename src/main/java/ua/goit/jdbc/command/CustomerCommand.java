@@ -38,14 +38,14 @@ public class CustomerCommand implements Command{
     public void create(){
         String name;
         while (true) {
-            view.write("Enter customer name:");
+            view.write("Enter customer name");
             name = view.read();
             if (!service.isExist(name)) {
                 break;
             }
-            view.write("Customer already exists.");
+            view.write("Customer already exists");
         }
-        view.write("Enter customer location:");
+        view.write("Enter customer location");
         String country = view.read();
         CustomerDto customerDto = new CustomerDto(name, country);
         service.save(customerDto);
@@ -62,17 +62,17 @@ public class CustomerCommand implements Command{
     public void update(){
         String name;
         while (true) {
-            view.write("Enter customer name:");
+            view.write("Enter customer name");
             name = view.read();
             if (service.isExist(name)) {
                 break;
             }
-            view.write("Customer doesn't exist.");
+            view.write("Customer doesn't exist");
         }
         CustomerDto customerDto = service.findByName(name);
-        view.write("Enter customer name:");
+        view.write("Enter customer name");
         name = view.read();
-        view.write("Enter customer location:");
+        view.write("Enter customer location");
         String country = view.read();
         if (!name.equals("")) {
             customerDto.setName(name);
@@ -87,12 +87,12 @@ public class CustomerCommand implements Command{
     public void delete(){
         String name;
         while (true) {
-            view.write("Enter customer name:");
+            view.write("Enter customer name");
             name = view.read();
             if (service.isExist(name)) {
                 break;
             }
-            view.write("Customer doesn't exist.");
+            view.write("Customer doesn't exist");
         }
         CustomerDto customerDto = service.findByName(name);
         service.delete(customerDto);
