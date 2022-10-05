@@ -1,6 +1,7 @@
 package ua.goit.jdbc.command;
 
 import ua.goit.jdbc.service.DevelopersService;
+import ua.goit.jdbc.service.SkillsService;
 import ua.goit.jdbc.view.View;
 
 import java.util.List;
@@ -8,12 +9,15 @@ import java.util.List;
 public class ListOfJavaDevelopers implements Command{
     public static final String LIST_OF_JAVA_DEVELOPERS = "query 3";
     private final View view;
-    private final DevelopersService service;
+    private final DevelopersService developersService;
+    private final SkillsService skillsService;
 
-    public ListOfJavaDevelopers(View view, DevelopersService service) {
+    public ListOfJavaDevelopers(View view, DevelopersService developersService, SkillsService skillsService) {
+        this.developersService = developersService;
         this.view = view;
-        this.service = service;
+        this.skillsService = skillsService;
     }
+
 
     @Override
     public boolean canExecute(String input) {
@@ -22,11 +26,12 @@ public class ListOfJavaDevelopers implements Command{
 
     @Override
     public void execute() {
-        view.write("Enter developer's language (Java, C++, JS): ");
+        skillsService.getListOfLanguage().stream().forEach(System.out::println);
+        view.write("Enter developer's language: ");
         String language = view.read();
         while (true) {
             try {
-                List<String> list = service.getListOfDevelopersByLanguage(language);
+                List<String> list = developersService.getListOfDevelopersByLanguage(language);
                 System.out.println(list);
                 break;
             } catch (RuntimeException exception) {

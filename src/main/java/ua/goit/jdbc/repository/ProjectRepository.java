@@ -17,22 +17,22 @@ public class ProjectRepository implements Repository<ProjectDao>{
     private static final String SELECT_BY_NAME = "SELECT id_project, name_project, cost from projects where name_project = ?";
 
     private static final String SALARY_OF_DEVELOPERS = "SELECT sum(developers.salary)" +
-            "FROM developers\n" +
-            "JOIN developer_projects ON developer_projects.id_developer = developers.id_developer" +
-            "JOIN projects ON projects.id_project = developer_projects.id_project" +
-            "WHERE projects.project_name = ?;";
+            " FROM developers" +
+            " JOIN developer_projects ON developer_projects.id_developer = developers.id_developer" +
+            " JOIN projects ON projects.id_project = developer_projects.id_project" +
+            " WHERE projects.name_project = ?;";
     private static final String LIST_OF_DEVELOPERS = "SELECT name_developer" +
-            "FROM developers" +
-            "JOIN developer_projects ON developer_projects.id_developer = developers.id_developer" +
-            "JOIN projects ON projects.id_project = developer_projects.id_project" +
-            "WHERE projects.name_project = ?";
+            " FROM developers" +
+            " JOIN developer_projects ON developer_projects.id_developer = developers.id_developer" +
+            " JOIN projects ON projects.id_project = developer_projects.id_project" +
+            " WHERE projects.name_project = ?";
     private static final String LIST_OF_PROJECTS =
             "SELECT projects.date_create, projects.name_project, COUNT(developers.name_developer) " +
-                    "FROM projects" +
-                    "JOIN developer_projects ON projects.id_project = developer_projects.id_project" +
-                    "JOIN developers ON developers.id_developer = developer_projects.id_developer" +
-                    "GROUP BY projects.date_create, projects.name_project" +
-                    "ORDER BY name_project;";
+                    " FROM projects" +
+                    " JOIN developer_projects ON projects.id_project = developer_projects.id_project" +
+                    " JOIN developers ON developers.id_developer = developer_projects.id_developer" +
+                    " GROUP BY projects.date_create, projects.name_project" +
+                    " ORDER BY name_project;";
     private static final String LIST_PROJECTS = "SELECT name_project FROM projects;";
 
     public ProjectRepository(DataManagerConnector connector) {
@@ -174,7 +174,7 @@ public class ProjectRepository implements Repository<ProjectDao>{
             statement.setString(1, projectName);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                list.add(resultSet.getString("developer_name"));
+                list.add(resultSet.getString("name_developer"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

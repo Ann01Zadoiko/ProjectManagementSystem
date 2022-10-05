@@ -23,9 +23,9 @@ public class DeveloperRepository implements Repository<DeveloperDao> {
                     "    where skills.programming_language = ?;";
     private static final String LIST_OF_DEVELOPERS_BY_SKILL_LEVEL =
             "SELECT developers.name_developer" +
-                    "FROM developers JOIN developer_skills ON developer_skills.id_developer = developers.id_developer" +
-                    "JOIN skills ON skills.id_skill = developer_skills.id_skill" +
-                    "where skills.skill_level = ?;";
+                    " FROM developers JOIN developer_skills ON developer_skills.id_developer = developers.id_developer" +
+                    " JOIN skills ON skills.id_skill = developer_skills.id_skill" +
+                    " where skills.skill_level = ?;";
 
     public DeveloperRepository(DataManagerConnector connector) {
         this.connector = connector;

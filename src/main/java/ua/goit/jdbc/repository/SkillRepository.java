@@ -5,7 +5,9 @@ import ua.goit.jdbc.model.dao.SkillDao;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SkillRepository implements Repository<SkillDao>{
     private final DataManagerConnector connector;
@@ -16,6 +18,8 @@ public class SkillRepository implements Repository<SkillDao>{
     private static final String SELECT_ALL = "SELECT id_skill, programming_language, skill_level from skills";
     private static final String SELECT_BY_LANGUAGE_AND_LEVEL =
             "SELECT id_skill, programming_language, skill_level from skills where programming_language = ?, skill_level = ?";
+    private static final String LIST_OF_LANGUAGE = "SELECT programming_language from skills;";
+    private static final String LIST_OF_LEVEL = "SELECT skill_level from skills;";
 
     public SkillRepository(DataManagerConnector connector) {
         this.connector = connector;
@@ -129,6 +133,36 @@ public class SkillRepository implements Repository<SkillDao>{
             throw new RuntimeException("Select skill by language and level failed");
         }
         return skillDao;
+    }
+
+    public Set<String> getListOfLanguage(){
+        Set<String> list = new HashSet<>();
+        try (Connection connection = connector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(LIST_OF_LANGUAGE);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()){
+                list.add(resultSet.getString("programming_language"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Request failed!");
+        }
+        return list;
+    }
+
+    public Set<String> getListOfLevel(){
+        Set<String> list = new HashSet<>();
+        try (Connection connection = connector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(LIST_OF_LEVEL);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()){
+                list.add(resultSet.getString("skill_level"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Request failed!");
+        }
+        return list;
     }
 
     private void getEntity(ResultSet resultSet, SkillDao skillDao) throws SQLException {

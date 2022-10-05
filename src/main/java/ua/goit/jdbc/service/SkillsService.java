@@ -6,11 +6,13 @@ import ua.goit.jdbc.repository.SkillRepository;
 import ua.goit.jdbc.service.converter.SkillConverter;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SkillsService implements Service<SkillDto>{
     private final SkillRepository skillRepository;
     private final SkillConverter skillConverter;
+
 
     public SkillsService(SkillRepository skillRepository, SkillConverter skillConverter) {
         this.skillRepository = skillRepository;
@@ -57,5 +59,13 @@ public class SkillsService implements Service<SkillDto>{
     public SkillDto findByLanguageAndLevel(String language, String level){
         SkillDao skillDao = skillRepository.findByLanguageAndLevel(language, level);
         return skillConverter.from(skillDao);
+    }
+
+    public Set<String> getListOfLanguage(){
+        return skillRepository.getListOfLanguage();
+    }
+
+    public Set<String> getListOfLevel(){
+        return skillRepository.getListOfLevel();
     }
 }

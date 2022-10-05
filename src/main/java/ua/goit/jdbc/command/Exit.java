@@ -4,7 +4,7 @@ import ua.goit.jdbc.exceptions.ExitException;
 import ua.goit.jdbc.view.View;
 
 public class Exit implements Command{
-    public static final String EXIT = "EXIT";
+    public static final String EXIT = "exit";
     private static final String BYE_MESSAGE = "BYE!";
     private final View view;
 

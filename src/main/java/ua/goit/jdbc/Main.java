@@ -54,8 +54,8 @@ public class Main {
         commands.add(new Exit(view));
         commands.add(new Help(view));
         commands.add(new ListOfDevelopersForProject(view,developersService,projectsService));
-        commands.add(new ListOfJavaDevelopers(view,developersService));
-        commands.add(new ListOfMiddleDevelopers(view,developersService));
+        commands.add(new ListOfJavaDevelopers(view,developersService, skillsService));
+        commands.add(new ListOfMiddleDevelopers(view,developersService, skillsService));
         commands.add(new ListOfProjects(view, projectsService));
         commands.add(new ProjectCommand(view,projectsService));
         commands.add(new SalaryForProject(view,projectsService,developersService));
