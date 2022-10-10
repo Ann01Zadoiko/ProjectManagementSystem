@@ -5,7 +5,9 @@ import ua.goit.jdbc.model.dto.CompanyDto;
 import ua.goit.jdbc.repository.CompanyRepository;
 import ua.goit.jdbc.service.converter.CompanyConverter;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CompaniesService implements Service<CompanyDto>{
@@ -31,13 +33,18 @@ public class CompaniesService implements Service<CompanyDto>{
 
     @Override
     public void delete(CompanyDto entity) {
-        repository.delete(converter.to(entity));
+//        repository.delete(converter.to(entity));
+        if (!repository.findByName(entity.getName()).isEmpty()) {
+            repository.delete(converter.to(entity));
+        } else {
+            System.out.println("This company doesn't exist");
+        }
     }
 
     @Override
-    public CompanyDto findById(Integer id) {
-        CompanyDao companyDao = repository.findById(id);
-        return converter.from(companyDao);
+    public Optional<CompanyDto> findById(Integer id) {
+        Optional<CompanyDao> companyDao = repository.findById(id);
+        return companyDao.map(converter::from);
     }
 
     @Override
@@ -47,15 +54,11 @@ public class CompaniesService implements Service<CompanyDto>{
                 .collect(Collectors.toList());
     }
 
-    public boolean isExist(String name) {
-        if (!repository.findByName(name).equals(null)){
-            return true;
-        } else
-            return false;
+    public boolean isExist(String name)  {
+      return repository.findByName(name).isPresent();
     }
 
     public CompanyDto findByName(String name) {
-        CompanyDao companyDao = repository.findByName(name);
-        return converter.from(companyDao);
+        return converter.from(repository.findByName(name).orElseThrow());
     }
 }

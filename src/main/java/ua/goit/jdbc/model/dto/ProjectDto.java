@@ -1,25 +1,27 @@
 package ua.goit.jdbc.model.dto;
 
-import java.time.LocalDate;
+
+import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class ProjectDto {
     Integer id;
     String name;
     Integer cost;
-    LocalDate date_create;
+    LocalDateTime dateCreate;
 
-    public ProjectDto(String name, Integer cost, LocalDate date_create){
+    public ProjectDto(String name, Integer cost, LocalDateTime dateCreate){
         this.name = name;
         this.cost = cost;
-        this.date_create = date_create;
+        this.dateCreate = dateCreate;
     }
 
-    public ProjectDto(Integer id, String name, Integer cost, LocalDate date_create) {
+    public ProjectDto(Integer id, String name, Integer cost, LocalDateTime dateCreate) {
         this.id = id;
         this.name = name;
         this.cost = cost;
-        this.date_create = date_create;
+        this.dateCreate = dateCreate;
     }
 
     public ProjectDto(){}
@@ -48,12 +50,12 @@ public class ProjectDto {
         this.cost = cost;
     }
 
-    public LocalDate getDateOfCreation() {
-        return date_create;
+    public LocalDateTime getDateCreate() {
+        return dateCreate;
     }
 
-    public void setDateOfCreation(LocalDate date_create) {
-        this.date_create = date_create;
+    public void setDateCreate(LocalDateTime dateCreate) {
+        this.dateCreate = dateCreate;
     }
 
     @Override
@@ -61,12 +63,12 @@ public class ProjectDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProjectDto that = (ProjectDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(cost, that.cost) && Objects.equals(date_create, that.date_create);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(cost, that.cost) && Objects.equals(dateCreate, that.dateCreate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, cost, date_create);
+        return Objects.hash(id, name, cost, dateCreate);
     }
 
     @Override
@@ -75,7 +77,7 @@ public class ProjectDto {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", cost=" + cost +
-                ", date_create=" + date_create +
+                ", dateCreate=" + dateCreate +
                 '}';
     }
 }

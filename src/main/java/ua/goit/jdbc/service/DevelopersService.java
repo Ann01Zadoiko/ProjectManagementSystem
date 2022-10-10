@@ -6,6 +6,7 @@ import ua.goit.jdbc.repository.DeveloperRepository;
 import ua.goit.jdbc.service.converter.DeveloperConverter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DevelopersService implements Service<DeveloperDto>{
@@ -35,9 +36,9 @@ public class DevelopersService implements Service<DeveloperDto>{
     }
 
     @Override
-    public DeveloperDto findById(Integer id) {
-        DeveloperDao developerDao = repository.findById(id);
-        return converter.from(developerDao);
+    public Optional<DeveloperDto> findById(Integer id) {
+        Optional<DeveloperDao> developerDao = repository.findById(id);
+        return developerDao.map(converter::from);
     }
 
     @Override
@@ -48,15 +49,11 @@ public class DevelopersService implements Service<DeveloperDto>{
     }
 
     public boolean isExist(String name) {
-        if (!repository.findByName(name).equals(null)){
-            return true;
-        } else
-            return false;
+        return repository.findByName(name).isPresent();
     }
 
     public DeveloperDto findByName(String name) {
-        DeveloperDao developerDao = repository.findByName(name);
-        return converter.from(developerDao);
+        return converter.from(repository.findByName(name).orElseThrow());
     }
 
     public List<String> getListOfDevelopersByLanguage(String language){

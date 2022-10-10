@@ -6,6 +6,7 @@ import ua.goit.jdbc.repository.CustomerRepository;
 import ua.goit.jdbc.service.converter.CustomerConverter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CustomersService implements Service<CustomerDto>{
@@ -35,9 +36,9 @@ public class CustomersService implements Service<CustomerDto>{
     }
 
     @Override
-    public CustomerDto findById(Integer id) {
-        CustomerDao customerDao = repository.findById(id);
-        return converter.from(customerDao);
+    public Optional<CustomerDto> findById(Integer id) {
+        Optional<CustomerDao> customerDao = repository.findById(id);
+        return customerDao.map(converter::from);
     }
 
     @Override
@@ -48,14 +49,10 @@ public class CustomersService implements Service<CustomerDto>{
     }
 
     public boolean isExist(String name) {
-        if (!repository.findByName(name).equals(null)){
-            return true;
-        } else
-            return false;
+        return repository.findByName(name).isPresent();
     }
 
     public CustomerDto findByName(String name) {
-        CustomerDao customerDao= repository.findByName(name);
-        return converter.from(customerDao);
+      return converter.from(repository.findByName(name).orElseThrow());
     }
 }

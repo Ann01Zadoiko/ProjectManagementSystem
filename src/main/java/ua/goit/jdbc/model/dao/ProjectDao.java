@@ -2,20 +2,21 @@ package ua.goit.jdbc.model.dao;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ProjectDao {
     Integer id;
     String name;
     Integer cost;
-    LocalDate date_create;
+    LocalDateTime dateCreate;
 
     public ProjectDao(){}
 
-    public ProjectDao(Integer id, String name, Integer cost, LocalDate date_create) {
+    public ProjectDao(Integer id, String name, Integer cost, LocalDateTime dateCreate) {
         this.id = id;
         this.name = name;
         this.cost = cost;
-        this.date_create = date_create;
+        this.dateCreate = dateCreate;
     }
 
     public Integer getId() {
@@ -42,12 +43,12 @@ public class ProjectDao {
         this.cost = cost;
     }
 
-    public LocalDate getDateOfCreation() {
-        return date_create;
+    public LocalDateTime getDateCreate() {
+        return dateCreate;
     }
 
-    public void setDateOfCreation(LocalDate date_create) {
-        this.date_create = date_create;
+    public void setDateCreate(LocalDateTime dateCreate) {
+        this.dateCreate = dateCreate;
     }
 
     @Override
@@ -56,7 +57,7 @@ public class ProjectDao {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", cost=" + cost +
-                ", date_create=" + date_create +
+                ", dateCreate=" + dateCreate +
                 '}';
     }
 

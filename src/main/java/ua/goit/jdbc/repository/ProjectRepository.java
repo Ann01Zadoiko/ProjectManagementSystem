@@ -1,20 +1,26 @@
 package ua.goit.jdbc.repository;
 
 import ua.goit.jdbc.config.DataManagerConnector;
+import ua.goit.jdbc.model.dao.CompanyDao;
 import ua.goit.jdbc.model.dao.ProjectDao;
+import ua.goit.jdbc.model.dto.ProjectDto;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class ProjectRepository implements Repository<ProjectDao>{
     private final DataManagerConnector connector;
-    private static final String INSERT = "INSERT into projects (name_project, cost) values (?,?)";
-    private static final String SELECT_BY_ID = "SELECT id_project, name_project, cost from projects where id_project = ?";
-    private static final String UPDATE = "UPDATE projects set name_project = ?, cost = ? where id_project = ?";
+    private static final String INSERT = "INSERT into projects (id_project, name_project, cost, date_create) values (?,?,?,?)";
+    private static final String SELECT_BY_ID = "SELECT id_project, name_project, cost, date_create from projects where id_project = ?";
+    private static final String UPDATE = "UPDATE projects set name_project = ?, cost = ?, date_create = ? where id_project = ?";
     private static final String DELETE = "DELETE from projects where id_project = ?";
-    private static final String SELECT_ALL = "SELECT id_project, name_project, cost from projects";
-    private static final String SELECT_BY_NAME = "SELECT id_project, name_project, cost from projects where name_project = ?";
+    private static final String SELECT_ALL = "SELECT id_project, name_project, cost, date_create from projects";
+    private static final String SELECT_BY_NAME = "SELECT id_project, name_project, cost, date_create from projects where name_project = ?";
 
     private static final String SALARY_OF_DEVELOPERS = "SELECT sum(developers.salary)" +
             " FROM developers" +
@@ -43,10 +49,11 @@ public class ProjectRepository implements Repository<ProjectDao>{
     public ProjectDao save(ProjectDao entity) {
         try (Connection connection = connector.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
-
-            statement.setString(1, entity.getName());
-            statement.setInt(2, entity.getCost());
-            statement.setDate(3, Date.valueOf(entity.getDateOfCreation()));
+            entity.setDateCreate(LocalDateTime.now());
+            statement.setInt(1,entity.getId());
+            statement.setString(2, entity.getName());
+            statement.setInt(3, entity.getCost());
+            statement.setTimestamp(4, Timestamp.valueOf(entity.getDateCreate()));
 
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -68,12 +75,12 @@ public class ProjectRepository implements Repository<ProjectDao>{
     public ProjectDao update(ProjectDao entity) {
         try (Connection connection = connector.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE)) {
-
-            statement.setInt(1, entity.getId());
-            statement.setString(2, entity.getName());
-            statement.setInt(3, entity.getCost());
-            statement.setDate(4,Date.valueOf(entity.getDateOfCreation()));
-
+            entity.setDateCreate(LocalDateTime.now());
+         //  statement.setInt(1, entity.getId());
+            statement.setString(1, entity.getName());
+           statement.setInt(2, entity.getCost());
+           statement.setTimestamp(3, Timestamp.valueOf(entity.getDateCreate()));
+            statement.setInt(4, entity.getId());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -84,7 +91,7 @@ public class ProjectRepository implements Repository<ProjectDao>{
     }
 
     @Override
-    public ProjectDao findById(Integer id) {
+    public Optional<ProjectDao> findById(Integer id) {
         ProjectDao projectDao = null;
         try (Connection connection = connector.getConnection();
         PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID);
@@ -98,7 +105,8 @@ public class ProjectRepository implements Repository<ProjectDao>{
             e.printStackTrace();
             throw new RuntimeException("Select project by id failed");
         }
-        return projectDao;
+        return Optional.ofNullable(projectDao);
+
     }
 
     @Override
@@ -124,7 +132,6 @@ public class ProjectRepository implements Repository<ProjectDao>{
         try (Connection connection = connector.getConnection();
              PreparedStatement statement = connection.prepareStatement(DELETE)) {
             statement.setInt(1, entity.getId());
-
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -133,21 +140,22 @@ public class ProjectRepository implements Repository<ProjectDao>{
     }
 
 
-    public ProjectDao findByName(String name) {
+    public Optional<ProjectDao> findByName(String name) {
         ProjectDao projectDao = null;
         try (Connection connection = connector.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_BY_NAME);
-             ResultSet resultSet = statement.executeQuery()){
-            statement.setString(1,name);
-            while (resultSet.next()){
-                projectDao = new ProjectDao();
-                getEntity(resultSet, projectDao);
+             PreparedStatement statement = connection.prepareStatement(SELECT_BY_NAME)) {
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    projectDao = new ProjectDao();
+                    getEntity(resultSet, projectDao);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Select project by name failed");
         }
-        return projectDao;
+        return Optional.ofNullable(projectDao);
     }
 
     public Integer getSalaryOfDevelopersFromProject(String projectName) {
@@ -218,9 +226,30 @@ public class ProjectRepository implements Repository<ProjectDao>{
     }
 
     private void getEntity(ResultSet resultSet, ProjectDao projectDao) throws SQLException {
-        projectDao.setId(resultSet.getInt("id_project"));
         projectDao.setName(resultSet.getString("name_project"));
         projectDao.setCost(resultSet.getInt("cost"));
-        projectDao.setDateOfCreation(resultSet.getDate("date_create").toLocalDate());
+        projectDao.setDateCreate(resultSet.getTimestamp("date_create").toLocalDateTime());
+        projectDao.setId(resultSet.getInt("id_project"));
+    }
+
+    private ProjectDao convert(ResultSet resultSet) throws SQLException {
+        ProjectDao projectsDao = new ProjectDao();
+        while (resultSet.next()) {
+            getEntity(resultSet, projectsDao);
+        }
+        return projectsDao;
+    }
+
+    public ProjectDao getById(Integer id){
+        ResultSet resultSet;
+        try (Connection connection = connector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
+            statement.setInt(1, id);
+            resultSet = statement.executeQuery();
+            return Objects.isNull(resultSet) ? null : convert(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -5,7 +5,9 @@ import ua.goit.jdbc.model.dto.CompanyDto;
 import ua.goit.jdbc.service.CompaniesService;
 import ua.goit.jdbc.view.View;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class CompanyCommand implements Command{
     public static final String COMPANY_COMMAND = "company";
@@ -27,10 +29,10 @@ public class CompanyCommand implements Command{
         view.write("Enter next command (create, read, update or delete):");
         String command = view.read();
         switch (command){
-            case "create": update();
-            case "read": read();
-            case "update": update();
-            case "delete": delete();
+            case "create": create(); break;
+            case "read": read(); break;
+            case "update": update(); break;
+            case "delete": delete(); break;
         }
     }
 
@@ -69,9 +71,9 @@ public class CompanyCommand implements Command{
             view.write("Company doesn't exist");
         }
         CompanyDto companyDto = service.findByName(name);
-        view.write("Enter company name");
+        view.write("Enter new company name");
         name = view.read();
-        view.write("Enter company location");
+        view.write("Enter new company location");
         String country = view.read();
         if (!name.equals("")) {
             companyDto.setName(name);

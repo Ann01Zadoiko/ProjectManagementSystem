@@ -6,6 +6,7 @@ import ua.goit.jdbc.repository.SkillRepository;
 import ua.goit.jdbc.service.converter.SkillConverter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,9 +39,9 @@ public class SkillsService implements Service<SkillDto>{
     }
 
     @Override
-    public SkillDto findById(Integer id) {
-        SkillDao skillDao = skillRepository.findById(id);
-        return skillConverter.from(skillDao);
+    public Optional<SkillDto> findById(Integer id) {
+        Optional<SkillDao> skillDao = skillRepository.findById(id);
+        return skillDao.map(skillConverter::from);
     }
 
     @Override
@@ -51,14 +52,11 @@ public class SkillsService implements Service<SkillDto>{
     }
 
     public boolean isExist(String language, String level) {
-        if (!skillRepository.findByLanguageAndLevel(language, level).equals(null))
-            return true;
-        else return false;
+        return skillRepository.findByLanguageAndLevel(language, level).isPresent();
     }
 
     public SkillDto findByLanguageAndLevel(String language, String level){
-        SkillDao skillDao = skillRepository.findByLanguageAndLevel(language, level);
-        return skillConverter.from(skillDao);
+        return skillConverter.from(skillRepository.findByLanguageAndLevel(language, level).orElseThrow());
     }
 
     public Set<String> getListOfLanguage(){

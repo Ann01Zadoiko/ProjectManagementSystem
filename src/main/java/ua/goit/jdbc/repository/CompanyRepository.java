@@ -6,10 +6,14 @@ import ua.goit.jdbc.model.dao.CompanyDao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class CompanyRepository implements Repository<CompanyDao>{
     private final DataManagerConnector connector;
-    private static final String INSERT = "INSERT into companies (name_company, country) values (?,?)";
+    private static final String TABLE_NAME  = "companies";
+    private static final String INSERT = "INSERT INTO " + TABLE_NAME + " (id_company, name_company, country)" +
+            " VALUES (?, ?, ?)";
     private static final String SELECT_BY_ID = "SELECT id_company, name_company, country from companies where id_company = ?";
     private static final String UPDATE = "UPDATE companies set name_company = ?, country = ? where id_company = ? ";
     private static final String DELETE = "DELETE from companies where id_company = ?";
@@ -25,8 +29,9 @@ public class CompanyRepository implements Repository<CompanyDao>{
     public CompanyDao save(CompanyDao entity) {
         try (Connection connection = connector.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, entity.getName());
-            statement.setString(2, entity.getCountry());
+            statement.setInt(1,entity.getId());
+            statement.setString(2, entity.getName());
+            statement.setString(3, entity.getCountry());
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -59,21 +64,22 @@ public class CompanyRepository implements Repository<CompanyDao>{
     }
 
     @Override
-    public CompanyDao findById(Integer id) {
+    public Optional<CompanyDao> findById(Integer id) {
         CompanyDao companyDao = null;
-        try(Connection connection = connector.getConnection();
-        PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID);
-        ResultSet resultSet = statement.executeQuery()){
-            statement.setInt(1,id);
-            while (resultSet.next()){
-                 companyDao = new CompanyDao();
-                getEntity(resultSet, companyDao);
+        try (Connection connection = connector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    companyDao = new CompanyDao();
+                    getEntity(resultSet, companyDao);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Select company by id failed");
         }
-        return companyDao;
+        return Optional.ofNullable(companyDao);
     }
 
     @Override
@@ -106,24 +112,23 @@ public class CompanyRepository implements Repository<CompanyDao>{
         }
     }
 
-    public CompanyDao findByName(String name) {
+    public Optional<CompanyDao> findByName(String name) {
         CompanyDao companyDao = null;
         try (Connection connection = connector.getConnection();
-        PreparedStatement statement = connection.prepareStatement(SELECT_BY_NAME);
-        ResultSet resultSet = statement.executeQuery()){
-            statement.setString(1,name);
-            while (resultSet.next()){
-                companyDao = new CompanyDao();
-                getEntity(resultSet, companyDao);
+             PreparedStatement statement = connection.prepareStatement(SELECT_BY_NAME)) {
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    companyDao = new CompanyDao();
+                    getEntity(resultSet, companyDao);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Select company by name failed");
         }
-        return companyDao;
+        return Optional.ofNullable(companyDao);
     }
-
-
 
     private void getEntity(ResultSet resultSet, CompanyDao companyDao) throws SQLException {
         companyDao.setId(resultSet.getInt("id_company"));

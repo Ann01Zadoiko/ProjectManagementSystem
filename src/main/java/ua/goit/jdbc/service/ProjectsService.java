@@ -6,6 +6,7 @@ import ua.goit.jdbc.repository.ProjectRepository;
 import ua.goit.jdbc.service.converter.ProjectConverter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ProjectsService implements Service<ProjectDto>{
@@ -36,9 +37,9 @@ public class ProjectsService implements Service<ProjectDto>{
     }
 
     @Override
-    public ProjectDto findById(Integer id) {
-        ProjectDao projectDao = projectRepository.findById(id);
-        return projectConverter.from(projectDao);
+    public Optional<ProjectDto> findById(Integer id) {
+        Optional<ProjectDao> projectDao = projectRepository.findById(id);
+        return projectDao.map(projectConverter::from);
     }
 
     @Override
@@ -49,15 +50,11 @@ public class ProjectsService implements Service<ProjectDto>{
     }
 
     public boolean isExist(String name) {
-        if (!projectRepository.findByName(name).equals(null)){
-            return true;
-        } else
-            return false;
+        return projectRepository.findByName(name).isPresent();
     }
 
     public ProjectDto findByName(String name) {
-        ProjectDao projectDao = projectRepository.findByName(name);
-        return projectConverter.from(projectDao);
+        return projectConverter.from(projectRepository.findByName(name).orElseThrow());
     }
 
     public Integer getSalaryOfDevelopersFromProject(String projectName){
@@ -74,5 +71,10 @@ public class ProjectsService implements Service<ProjectDto>{
 
     public List<String> getListProject(){
         return projectRepository.getListProject();
+    }
+
+    public ProjectDto getById(Integer id){
+        ProjectDao projectDao = projectRepository.getById(id);
+        return projectConverter.from(projectDao);
     }
 }

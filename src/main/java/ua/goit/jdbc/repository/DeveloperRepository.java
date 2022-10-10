@@ -1,15 +1,17 @@
 package ua.goit.jdbc.repository;
 
 import ua.goit.jdbc.config.DataManagerConnector;
+import ua.goit.jdbc.model.dao.CompanyDao;
 import ua.goit.jdbc.model.dao.DeveloperDao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DeveloperRepository implements Repository<DeveloperDao> {
     private final DataManagerConnector connector;
-    private static final String INSERT = "INSERT INTO developers (name_developer, age, salary) VALUES (?,?,?)";
+    private static final String INSERT = "INSERT INTO developers (id_developer, name_developer, age, salary) VALUES (?,?,?,?)";
     private static final String UPDATE = "UPDATE developers set name_developer = ?, age = ?, salary = ? where id_developer = ?";
     private static final String DELETE = "DELETE from developers where id_developer = ?";
     private static final String SELECT_BY_ID = "SELECT id_developer, name_developer, age, salary from developers where id_developer = ?";
@@ -35,10 +37,10 @@ public class DeveloperRepository implements Repository<DeveloperDao> {
     public DeveloperDao save(DeveloperDao entity) {
         try (Connection connection = connector.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
-
-            statement.setString(1, entity.getName());
-            statement.setInt(2, entity.getAge());
-            statement.setInt(3, entity.getSalary());
+            statement.setInt(1, entity.getId());
+            statement.setString(2, entity.getName());
+            statement.setInt(3, entity.getAge());
+            statement.setInt(4, entity.getSalary());
 
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -76,7 +78,7 @@ public class DeveloperRepository implements Repository<DeveloperDao> {
     }
 
     @Override
-    public DeveloperDao findById(Integer id) {
+    public Optional<DeveloperDao> findById(Integer id) {
         DeveloperDao developerDao = null;
         try (Connection connection = connector.getConnection();
         PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID);
@@ -90,7 +92,7 @@ public class DeveloperRepository implements Repository<DeveloperDao> {
             e.printStackTrace();
             throw new RuntimeException("Select developer by id failed");
         }
-        return developerDao;
+        return Optional.ofNullable(developerDao);
     }
 
     @Override
@@ -116,7 +118,6 @@ public class DeveloperRepository implements Repository<DeveloperDao> {
         try (Connection connection = connector.getConnection();
              PreparedStatement statement = connection.prepareStatement(DELETE)) {
             statement.setInt(1, entity.getId());
-
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -125,21 +126,36 @@ public class DeveloperRepository implements Repository<DeveloperDao> {
     }
 
 
-    public DeveloperDao findByName(String name) {
+    public Optional<DeveloperDao> findByName(String name) {
+//        DeveloperDao developerDao = null;
+//        try (Connection connection = connector.getConnection();
+//        PreparedStatement statement = connection.prepareStatement(SELECT_BY_NAME);
+//        ResultSet resultSet = statement.executeQuery()){
+//            statement.setString(1, name);
+//            while (resultSet.next()){
+//                developerDao = new DeveloperDao();
+//                getEntity(resultSet, developerDao);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Select developer by name failed");
+//        }
+//        return Optional.ofNullable(developerDao);
         DeveloperDao developerDao = null;
         try (Connection connection = connector.getConnection();
-        PreparedStatement statement = connection.prepareStatement(SELECT_BY_NAME);
-        ResultSet resultSet = statement.executeQuery()){
+             PreparedStatement statement = connection.prepareStatement(SELECT_BY_NAME)) {
             statement.setString(1, name);
-            while (resultSet.next()){
-                developerDao = new DeveloperDao();
-                getEntity(resultSet, developerDao);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    developerDao = new DeveloperDao();
+                    getEntity(resultSet, developerDao);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Select developer by name failed");
         }
-        return developerDao;
+        return Optional.ofNullable(developerDao);
     }
 
     public List<String> getListOfDevelopersByLanguage(String language){

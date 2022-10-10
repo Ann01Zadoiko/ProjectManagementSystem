@@ -29,10 +29,10 @@ public class DeveloperCommand implements Command{
         view.write("Enter next command (create, read, update or delete):");
         String command = view.read();
         switch (command){
-            case "create": update();
-            case "read": read();
-            case "update": update();
-            case "delete": delete();
+            case "create": create(); break;
+            case "read": read(); break;
+            case "update": update(); break;
+            case "delete": delete(); break;
         }
     }
 
@@ -46,11 +46,13 @@ public class DeveloperCommand implements Command{
             }
             view.write("Developer already exists");
         }
+        view.write("Enter developer id");
+        Integer id = Integer.valueOf(view.read());
         view.write("Enter developer age");
         Integer age = Integer.valueOf(view.read());
         view.write("Enter developer salary");
         Integer salary = Integer.valueOf(view.read());
-        DeveloperDto developerDto = new DeveloperDto(name,age,salary);
+        DeveloperDto developerDto = new DeveloperDto(id,name,age,salary);
         service.save(developerDto);
         view.write(String.format("Developer %s added, age %d added and salary %d added to database", name, age,salary));
     }
@@ -73,11 +75,11 @@ public class DeveloperCommand implements Command{
             view.write("Developer doesn't exist");
         }
         DeveloperDto developerDto = service.findByName(name);
-        view.write("Enter developer name");
+        view.write("Enter new developer name");
         name = view.read();
-        view.write("Enter developer age");
+        view.write("Enter new developer age");
         Integer age = Integer.valueOf(view.read());
-        view.write("Enter developer salary");
+        view.write("Enter new developer salary");
         Integer salary = Integer.valueOf(view.read());
         if (!name.equals("")) {
             developerDto.setName(name);

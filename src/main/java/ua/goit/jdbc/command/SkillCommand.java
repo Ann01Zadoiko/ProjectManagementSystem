@@ -28,10 +28,10 @@ public class SkillCommand implements Command{
         view.write("Enter next command (create, read, update or delete):");
         String command = view.read();
         switch (command){
-            case "create": update();
-            case "read": read();
-            case "update": update();
-            case "delete": delete();
+            case "create": create(); break;
+            case "read": read(); break;
+            case "update": update(); break;
+            case "delete": delete(); break;
         }
     }
 
@@ -45,7 +45,9 @@ public class SkillCommand implements Command{
             if (!service.isExist(language,level)) break;
             view.write("Skill already exists");
         }
-        SkillDto skillDto = new SkillDto(language,level);
+        view.write("Enter skill id");
+        Integer id = Integer.valueOf(view.read());
+        SkillDto skillDto = new SkillDto(id,language,level);
         service.save(skillDto);
         view.write(String.format("Programming language %s added and skill level %s added to database",language,level));
     }
@@ -70,9 +72,9 @@ public class SkillCommand implements Command{
             view.write("Skill doesn't exist");
         }
         SkillDto skillDto = service.findByLanguageAndLevel(language,level);
-        view.write("Enter programming language");
+        view.write("Enter new programming language");
         language = view.read();
-        view.write("Enter skill level");
+        view.write("Enter new skill level");
         level = view.read();
         if (!language.equals(null)){
             skillDto.setProgrammingLanguage(language);

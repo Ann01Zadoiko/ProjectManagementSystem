@@ -28,10 +28,10 @@ public class CustomerCommand implements Command{
         view.write("Enter next command (create, read, update or delete):");
         String command = view.read();
         switch (command){
-            case "create": update();
-            case "read": read();
-            case "update": update();
-            case "delete": delete();
+            case "create": create(); break;
+            case "read": read(); break;
+            case "update": update(); break;
+            case "delete": delete(); break;
         }
     }
 
@@ -45,9 +45,11 @@ public class CustomerCommand implements Command{
             }
             view.write("Customer already exists");
         }
+        view.write("Enter customer id");
+        Integer id = Integer.valueOf(view.read());
         view.write("Enter customer location");
         String country = view.read();
-        CustomerDto customerDto = new CustomerDto(name, country);
+        CustomerDto customerDto = new CustomerDto(id,name, country);
         service.save(customerDto);
         view.write(String.format("Customer %s added located in %s added to database", name, country));
     }
@@ -70,9 +72,9 @@ public class CustomerCommand implements Command{
             view.write("Customer doesn't exist");
         }
         CustomerDto customerDto = service.findByName(name);
-        view.write("Enter customer name");
+        view.write("Enter new customer name");
         name = view.read();
-        view.write("Enter customer location");
+        view.write("Enter new customer location");
         String country = view.read();
         if (!name.equals("")) {
             customerDto.setName(name);
@@ -97,7 +99,7 @@ public class CustomerCommand implements Command{
         CustomerDto customerDto = service.findByName(name);
         service.delete(customerDto);
         if(!service.isExist(name)) {
-            view.write(String.format("Company %s deleted from database", name));
+            view.write(String.format("Customer %s deleted from database", name));
         }
     }
 }
